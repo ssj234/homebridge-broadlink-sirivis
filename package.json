@@ -1,0 +1,32 @@
+{
+  "name": "homebridge-broadlink-sirivis",
+  "version": "1.1.2",
+  "description": "Broadlink RM plugin",
+  "license": "ISC",
+  "keywords": [
+    "homebridge-plugin",
+    "broadlink",
+    "rm pro 3",
+    "rm mini 3"
+  ],
+  "engines": {
+    "node": ">=7.6.0",
+    "homebridge": ">=0.2.0"
+  },
+  "author": {
+    "name": "shisj"
+  },
+  "dependencies": {
+    "broadlink-js-smth": "^1.0.5",
+    "chai": "^4.1.2",
+    "github-version-checker": "^1.2.0",
+    "homebridge-platform-helper": "1.0.5",
+    "ping": "^0.2.2",
+    "uuid": "^3.2.1"
+  },
+  "devDependencies": {
+    "hap-nodejs": "^0.4.41",
+    "mocha": "^5.0.1",
+    "release-it": "^7.2.1"
+  }
+}
