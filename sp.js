@@ -1,5 +1,6 @@
 
 const { getDevice } = require('./helpers/getDevice');
+const HAPServer = require('hap-nodejs').HAPServer;
 
 function BroadlinkSP(log, config, api) {
     var Service = global.Service;
@@ -29,30 +30,40 @@ BroadlinkSP.prototype.getState = function(callback) {
     const dev = getDevice({ host, log } = self);
 
     self.log("getState for SP,host is : " + host);
-    if(!dev){
-        self.log("getState cannot find SP Device,host is : " + host);//找不到也要回报
-        callback("ERROR", false);
+    if(!dev || dev.state == 'inactive'){ // 未找到设备或状态为非激活
+        self.log("getState cannot find SP Device，or state is inactive,host is : " + host);//找不到也要回报
+        callback(HAPServer.Status.OPERATION_TIMED_OUT, false);
     }else{
-        dev.check_power();// 检查设备状态
+        dev.check_power();// 检查设备状态,如果掉线了怎么办
         if(!dev.addPowerListener){
             dev.on("power", this.onPower().bind(this));
             dev.addPowerListener = true;
         }
+
+        setTimeout(function(){
+            if(self.onPowerCb){
+                self.onPowerCb(HAPServer.Status.OPERATION_TIMED_OUT,false);
+                self.onPowerCb = undefined;
+            }
+        },5000);
     }
 }
 
 BroadlinkSP.prototype.onPower = function(){
-    self = this;
     return function(pwr){
         this.log("get sp power, status is on - " + pwr);
         if (!pwr) {
             this.powered = false;
-            console.log(self.onPowerCb);
-            console.log(typeof self.onPowerCb);
-            return self.onPowerCb(null, false);
+            if(this.onPowerCb){
+                this.onPowerCb(null, false);
+                this.onPowerCb = undefined;
+            }
         } else {
             this.powered = true;
-            return this.onPowerCb(null, true);
+            if(this.onPowerCb){
+                this.onPowerCb(null, true);
+                this.onPowerCb = undefined;
+            }
         }
     };
 }
@@ -60,9 +71,9 @@ BroadlinkSP.prototype.onPower = function(){
 BroadlinkSP.prototype.setState = function(state, callback) {
     var self = this;
     const dev = getDevice({ host, log } = self);
-    if(!dev){
+    if(!dev  || dev.state == 'inactive'){ // 未找到设备或状态为非激活
         self.log("setState cannot find SP Device,host is : " + host);
-        callback("ERROR", false);
+        callback(HAPServer.Status.OPERATION_TIMED_OUT, false);
         return;
     }
     if (state) {// set true
