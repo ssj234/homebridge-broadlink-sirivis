@@ -7,6 +7,10 @@ const BroadlinkRMAccessory = require('./accessory');
 
 class WindowCoveringAccessory extends BroadlinkRMAccessory {
 
+  constructor (log, config = {}, serviceManagerType,platformConfig) {  
+    if(!config.host) config.host = platformConfig.host;   
+    super(log, config, serviceManagerType);
+  }
   setDefaults () {
     const { config, state } = this;
     const { currentPosition, positionState } = state;

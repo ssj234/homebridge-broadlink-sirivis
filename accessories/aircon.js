@@ -10,7 +10,8 @@ const BroadlinkRMAccessory = require('./accessory');
 
 class AirConAccessory extends BroadlinkRMAccessory {
 
-  constructor (log, config = {}, serviceManagerType) {    
+  constructor (log, config = {}, serviceManagerType,platformConfig) {  
+    if(!config.host) config.host = platformConfig.host;   
     super(log, config, serviceManagerType);
 
     // Characteristic isn't defined until runtime so we set these the instance scope
