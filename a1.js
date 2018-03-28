@@ -1,5 +1,6 @@
 
 const { getDevice } = require('./helpers/getDevice');
+const HAPServer = require('hap-nodejs').HAPServer;
 const classTypes = {
     'temperature': "温度",
     'light': "光线",
@@ -51,9 +52,9 @@ BroadlinkA1.prototype.getDeviceData = function(callback) {
     this.A1Callbace = callback;
     self.log("A1 getdata["+self.sensorType+"] form host is : " + host);
     
-    if(!dev){
-        self.log("Cannot find A1 Device,host is : " + host);//找不到也要回报
-        callback("ERROR", false);
+    if(!dev || dev.state == 'inactive'){
+        self.log("Cannot find A1 Device,or state is inactice,host is : " + host);//找不到也要回报
+        callback(HAPServer.Status.OPERATION_TIMED_OUT, false);
     }else{
         if(!this.addListener){
             eventEmitter.on(this.sensorType,function(data){
