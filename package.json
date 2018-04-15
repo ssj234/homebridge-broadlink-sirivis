@@ -1,6 +1,6 @@
 {
   "name": "homebridge-broadlink-sirivis",
-  "version": "1.1.5",
+  "version": "1.1.6",
   "description": "Broadlink RM plugin",
   "license": "ISC",
   "keywords": [
@@ -17,7 +17,7 @@
     "name": "shisj"
   },
   "dependencies": {
-    "broadlink-js-smth": "^1.0.5",
+    "broadlink-js-smth": "^1.0.6",
     "chai": "^4.1.2",
     "github-version-checker": "^1.2.0",
     "homebridge-platform-helper": "1.0.5",
