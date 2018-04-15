@@ -77,23 +77,23 @@ BroadlinkSP.prototype.setState = function(state, callback) {
         return;
     }
     if (state) {// set true
-        if (this.powered) {
-            return callback(null, true)
-        } else {
+        //if (this.powered) {
+        //    return callback(null, true)
+        //} else {
             self.log("Set SP to ON!");
             dev.set_power(true);
             this.powered = true;
             return callback(null);
-        }
+        //}
     } else { // set false
-        if (this.powered) {
+        //if (this.powered) {
             self.log("Set SP to OFF!");
             dev.set_power(false);
             this.powered = false;
             return callback(null);
-        } else {
-            return callback(null, false)
-        }
+        //} else {
+        //    return callback(null, false)
+        //}
     }
 }
 
