@@ -56,7 +56,7 @@ broadlink.on('deviceReady', (device) => {
 })
 
 const addDevice = (device) => {
-  if (!device.isUnitTestDevice && (discoveredDevices[device.host.address] || discoveredDevices[device.host.macAddress])) return;
+  // if (!device.isUnitTestDevice && (discoveredDevices[device.host.address] || discoveredDevices[device.host.macAddress])) return;
 
   discoveredDevices[device.host.address] = device;
   // discoveredDevices[device.host.macAddress] = device;
