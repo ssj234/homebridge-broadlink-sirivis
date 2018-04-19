@@ -194,6 +194,24 @@ class AirConAccessory extends BroadlinkRMAccessory {
 
       return;
     }
+    if (targetHeatingCoolingState === 'heat') {
+      this.updateServiceCurrentHeatingCoolingState(HeatingCoolingStates.heat);
+      await this.performSend(data.heat);
+
+      return;
+    }
+    if (targetHeatingCoolingState === 'cool') {
+      this.updateServiceCurrentHeatingCoolingState(HeatingCoolingStates.cool);
+      await this.performSend(data.cool);
+
+      return;
+    }
+    if (targetHeatingCoolingState === 'auto') {
+      this.updateServiceCurrentHeatingCoolingState(HeatingCoolingStates.auto);
+      await this.performSend(data.auto);
+
+      return;
+    }
 
     // Perform the auto -> cool/heat conversion if `replaceAutoMode` is specified
     if (replaceAutoMode && targetHeatingCoolingState === 'auto') {

@@ -8,7 +8,7 @@ const BroadlinkRMAccessory = require('./accessory');
 class LearnIRAccessory extends BroadlinkRMAccessory {
 
   constructor (log, config = {}, serviceManagerType) {    
-
+    if(!config.host) config.host = platformConfig.host;
     // Set a default name for the accessory
     if (!config.name) config.name = 'Learn Code';
     config.persistState = false;
