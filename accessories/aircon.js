@@ -382,8 +382,14 @@ class AirConAccessory extends BroadlinkRMAccessory {
 
     log(`${name} onTemperature (${temperature})`);
     
-    assert.isBelow(temperature, config.maxTemperature + 1, `\x1b[31m[CONFIG ERROR] \x1b[33mmaxTemperature\x1b[0m (${config.maxTemperature}) must be more than the reported temperature (${temperature})`)
-    assert.isAbove(temperature, config.minTemperature - 1, `\x1b[31m[CONFIG ERROR] \x1b[33mminTemperature\x1b[0m (${config.maxTemperature}) must be less than the reported temperature (${temperature})`)
+    if(temperature >=config.maxTemperature + 1 ){
+      return;
+    }
+    if(temperature <= config.minTemperature - 1){
+      return;
+    }
+    // assert.isBelow(temperature, config.maxTemperature + 1, `\x1b[31m[CONFIG ERROR] \x1b[33mmaxTemperature\x1b[0m (${config.maxTemperature}) must be more than the reported temperature (${temperature})`)
+    // assert.isAbove(temperature, config.minTemperature - 1, `\x1b[31m[CONFIG ERROR] \x1b[33mminTemperature\x1b[0m (${config.maxTemperature}) must be less than the reported temperature (${temperature})`)
 
     this.processQueuedTemperatureCallbacks(temperature);
   }
