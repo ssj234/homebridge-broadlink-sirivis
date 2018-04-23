@@ -56,7 +56,10 @@ class WindowCoveringAccessory extends BroadlinkRMAccessory {
       const { open, close, stop } = data;
       
       this.reset();
-
+      if(state.targetPosition == 0){ // close
+        state.currentPosition = 100;
+        previousValue=100;
+      }
       // Ignore if no change to the targetPosition
       if (state.targetPosition === previousValue) return;
 
@@ -234,6 +237,7 @@ class WindowCoveringAccessory extends BroadlinkRMAccessory {
       getMethod: this.getCharacteristicValue,
       setMethod: this.setCharacteristicValue,
       props: {
+        ignorePreviousValue:true,
         setValuePromise: this.setTargetPosition.bind(this)
       }
     });
