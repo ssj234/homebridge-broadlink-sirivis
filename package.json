@@ -1,6 +1,6 @@
 {
   "name": "homebridge-broadlink-sirivis",
-  "version": "1.1.9",
+  "version": "1.1.10",
   "description": "Broadlink RM plugin",
   "license": "ISC",
   "keywords": [
