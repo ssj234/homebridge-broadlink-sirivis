@@ -65,7 +65,7 @@ class AirConAccessory extends BroadlinkRMAccessory {
 
     // When a temperature hex doesn't exist we try to use the hex set for these
     // default temperatures
-    config.defaultCoolTemperature = config.defaultCoolTemperature || 16;
+    config.defaultCoolTemperature = config.defaultCoolTemperature || 18;
     config.defaultHeatTemperature = config.defaultHeatTemperature || 30;
 
     // Used to determine when we should use the defaultHeatTemperature or the
@@ -196,20 +196,17 @@ class AirConAccessory extends BroadlinkRMAccessory {
     }
     if (targetHeatingCoolingState === 'heat') {
       this.updateServiceCurrentHeatingCoolingState(HeatingCoolingStates.heat);
-      await this.performSend(data.heat);
-
+      await this.performSend(data.heat['temperature'+state.targetTemperature]);
       return;
     }
     if (targetHeatingCoolingState === 'cool') {
       this.updateServiceCurrentHeatingCoolingState(HeatingCoolingStates.cool);
-      await this.performSend(data.cool);
-
+      await this.performSend(data.cool['temperature'+state.targetTemperature]);
       return;
     }
     if (targetHeatingCoolingState === 'auto') {
       this.updateServiceCurrentHeatingCoolingState(HeatingCoolingStates.auto);
-      await this.performSend(data.auto);
-
+      await this.performSend(data.auto['temperature'+state.targetTemperature]);
       return;
     }
 
@@ -293,8 +290,8 @@ class AirConAccessory extends BroadlinkRMAccessory {
 
     this.log(`${name} sendTemperature (set mode to ${mode}`);
 
-    state.targetHeatingCoolingState = HeatingCoolingStates[mode];
-    this.updateServiceCurrentHeatingCoolingState(HeatingCoolingStates[mode]);
+    // state.targetHeatingCoolingState = HeatingCoolingStates[mode];
+    // this.updateServiceCurrentHeatingCoolingState(HeatingCoolingStates[mode]);
     this.serviceManager.refreshCharacteristicUI(Characteristic.CurrentHeatingCoolingState);
     this.serviceManager.refreshCharacteristicUI(Characteristic.TargetHeatingCoolingState);
   }
@@ -305,12 +302,28 @@ class AirConAccessory extends BroadlinkRMAccessory {
 
     let finalTemperature = temperature;
     let hexData = data[`temperature${temperature}`];
+    if(state.targetHeatingCoolingState == this.HeatingCoolingStates["auto"]){
+      hexData = {data:data["auto"][`temperature${temperature}`]};
+    }else if(state.targetHeatingCoolingState == this.HeatingCoolingStates["heat"]){
+      hexData = {data:data["heat"][`temperature${temperature}`]};
+    }else if(state.targetHeatingCoolingState == this.HeatingCoolingStates["cool"]){
+      hexData = {data:data["cool"][`temperature${temperature}`]};
+    }
 
     // You may not want to set the hex data for every single mode...
-    if (!hexData) {
+    if (!hexData.data) {
       const defaultTemperature = (temperature >= heatTemperature) ? defaultHeatTemperature : defaultCoolTemperature;
-      hexData = data[`temperature${defaultTemperature}`];
-
+      // hexData = {data:data[`temperature${defaultTemperature}`]};
+      if(state.targetHeatingCoolingState == this.HeatingCoolingStates["auto"]){
+        hexData = {data:data["auto"][`temperature${defaultTemperature}`]};
+      }else if(state.targetHeatingCoolingState == this.HeatingCoolingStates["heat"]){
+        hexData = {data:data["heat"][`temperature${defaultTemperature}`]};
+      }else if(state.targetHeatingCoolingState == this.HeatingCoolingStates["cool"]){
+        hexData = {data:data["cool"][`temperature${defaultTemperature}`]};
+      }
+      
+      this.serviceManager.setCharacteristic(Characteristic.TargetTemperature, defaultTemperature);
+      
       assert(hexData, `\x1b[31m[CONFIG ERROR] \x1b[0m You need to provide a hex code for the following temperature:
         \x1b[33m{ "temperature${temperature}": { "data": "HEXCODE", "pseudo-mode" : "heat/cool" } }\x1b[0m 
         or provide the default temperature:
