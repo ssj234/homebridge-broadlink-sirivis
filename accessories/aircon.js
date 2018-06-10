@@ -308,6 +308,9 @@ class AirConAccessory extends BroadlinkRMAccessory {
       hexData = {data:data["heat"][`temperature${temperature}`]};
     }else if(state.targetHeatingCoolingState == this.HeatingCoolingStates["cool"]){
       hexData = {data:data["cool"][`temperature${temperature}`]};
+    }else if(state.targetHeatingCoolingState == this.HeatingCoolingStates["off"]){
+      hexData = {data:data["auto"][`temperature${temperature}`]};
+      this.serviceManager.setCharacteristic(Characteristic.TargetHeatingCoolingState, Characteristic.TargetHeatingCoolingState.AUTO);
     }
 
     // You may not want to set the hex data for every single mode...
@@ -320,6 +323,9 @@ class AirConAccessory extends BroadlinkRMAccessory {
         hexData = {data:data["heat"][`temperature${defaultTemperature}`]};
       }else if(state.targetHeatingCoolingState == this.HeatingCoolingStates["cool"]){
         hexData = {data:data["cool"][`temperature${defaultTemperature}`]};
+      }else if(state.targetHeatingCoolingState == this.HeatingCoolingStates["off"]){
+        hexData = {data:data["auto"][`temperature${temperature}`]};
+        this.serviceManager.setCharacteristic(Characteristic.TargetHeatingCoolingState, Characteristic.TargetHeatingCoolingState.AUTO);
       }
       
       this.serviceManager.setCharacteristic(Characteristic.TargetTemperature, defaultTemperature);
@@ -536,12 +542,12 @@ class AirConAccessory extends BroadlinkRMAccessory {
       this.state.isRunningAutomatically = true;
 
       this.log(`${name} checkTemperatureForAutoOnOff (${temperature} < ${autoHeatTemperature}: auto heat)`);
-      serviceManager.setCharacteristic(Characteristic.TargetHeatingCoolingState, Characteristic.TargetHeatingCoolingState.HEAT);
+      // serviceManager.setCharacteristic(Characteristic.TargetHeatingCoolingState, Characteristic.TargetHeatingCoolingState.HEAT);
     } else if (autoCoolTemperature && temperature > autoCoolTemperature) {
       this.state.isRunningAutomatically = true;
 
       this.log(`${name} checkTemperatureForAutoOnOff (${temperature} > ${autoCoolTemperature}: auto cool)`);
-      serviceManager.setCharacteristic(Characteristic.TargetHeatingCoolingState, Characteristic.TargetHeatingCoolingState.COOL);
+      // serviceManager.setCharacteristic(Characteristic.TargetHeatingCoolingState, Characteristic.TargetHeatingCoolingState.COOL);
     } else {
       this.log(`${name} checkTemperatureForAutoOnOff (temperature is ok)`);
 
@@ -549,7 +555,7 @@ class AirConAccessory extends BroadlinkRMAccessory {
         this.isAutomatedOff = true;
 
         this.log(`${name} checkTemperatureForAutoOnOff (auto off)`);
-        serviceManager.setCharacteristic(Characteristic.TargetHeatingCoolingState, Characteristic.TargetHeatingCoolingState.OFF);
+        // serviceManager.setCharacteristic(Characteristic.TargetHeatingCoolingState, Characteristic.TargetHeatingCoolingState.OFF);
       } else {
         return;
       }
