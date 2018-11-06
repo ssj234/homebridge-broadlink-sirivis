@@ -30,11 +30,10 @@ let discovering = false;
 const discoverDevices = (count = 0) => {
   discovering = true;
 
-  /*if (count >= 50000) {
+  if (count >= 5) {
     discovering = false;
-
     return;
-  }*/
+  }
 
   broadlink.discover(null,["255.255.255.255"]);
   count++;
@@ -51,17 +50,26 @@ broadlink.on('deviceReady', (device) => {
   if(device.type.indexOf("rm") != -1 ||device.type.indexOf("RM") != -1){
     console.log(`Discovered Broadlink RM device at ${device.host.address} (${device.host.macAddress})`)
   }
-   addDevice(device); // 添加到discoveredDevices中
-   startPing(device);
+  var addFlag = addDevice(device); // 添加到discoveredDevices中
+  if(addFlag){
+    startPing(device);
+  }
 })
 
 const addDevice = (device) => {
-  // if (!device.isUnitTestDevice && (discoveredDevices[device.host.address] || discoveredDevices[device.host.macAddress])) return;
+  var lower = device.host.macAddress.toLowerCase();
+  var upper = device.host.macAddress.toUpperCase();
+  if ( discoveredDevices[device.host.address] 
+    || discoveredDevices[lower]
+    || discoveredDevices[upper]){
+    return false;
+  }
 
   discoveredDevices[device.host.address] = device;
   // discoveredDevices[device.host.macAddress] = device;
-  discoveredDevices[device.host.macAddress.toLowerCase()] = device;
-  discoveredDevices[device.host.macAddress.toUpperCase()] = device;
+  discoveredDevices[lower] = device;
+  discoveredDevices[upper] = device;
+  return true;
 }
 
 const getDevice = ({ host, log, learnOnly }) => {
